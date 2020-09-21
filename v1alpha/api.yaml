@@ -4,4 +4,7 @@ type: google.api.Service
 config_version: 3
 
 http:
-  rules: []
+  rules:
+    - selector: indeed.actuary.v1alpha.ActuaryService.Record
+      put: /v1alpha/record
+      body: "*"
