@@ -22,6 +22,8 @@ import (
 	"indeed.com/mjpitz/actuary/internal/checks"
 	"indeed.com/mjpitz/actuary/internal/service"
 	"indeed.com/mjpitz/actuary/v1alpha"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type config struct {
@@ -55,6 +57,7 @@ func main() {
 			// setup the healthcheck
 			allChecks := checks.Checks()
 			checks.RegisterHealthCheck(ctx, fwdMux, grpcServer, allChecks)
+			fwdMux.Handle("/metrics", promhttp.Handler())
 
 			// setup actuary
 			actuaryServer := service.NewActuaryServer()
