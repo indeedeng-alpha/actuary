@@ -56,7 +56,7 @@ func RegisterHealthCheck(ctx context.Context, httpServer *http.ServeMux, grpcSer
 		}
 	}()
 
-	httpServer.HandleFunc("/healthz", health.HandlerFunc(monitor))
+	httpServer.HandleFunc("/health", health.HandlerFunc(monitor))
 	healthpb.RegisterHealthServer(grpcServer, healthCheck)
 	_ = monitor.Start(ctx)
 }

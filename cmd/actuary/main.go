@@ -54,7 +54,7 @@ func main() {
 			grpcServer := grpc.NewServer()
 			fwdMux := http.NewServeMux()
 
-			// setup the healthcheck
+			// setup the /health and /metrics
 			allChecks := checks.Checks()
 			checks.RegisterHealthCheck(ctx, fwdMux, grpcServer, allChecks)
 			fwdMux.Handle("/metrics", promhttp.Handler())
