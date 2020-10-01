@@ -8,7 +8,7 @@ ENV GOSUMDB off
 
 WORKDIR /go/src/actuary
 
-COPY private .
+COPY . .
 RUN go install ./cmd/actuary/
 
 FROM alpine:${ALPINE_VERSION}

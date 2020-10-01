@@ -15,7 +15,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"indeed.com/mjpitz/actuary/internal/db"
+	"github.com/indeedeng-alpha/actuary/internal/db"
 )
 
 func Checks(gormDB *gorm.DB) []check.Check {

@@ -1,4 +1,4 @@
-module indeed.com/mjpitz/actuary
+module github.com/indeedeng-alpha/actuary
 
 go 1.15
 

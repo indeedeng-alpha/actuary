@@ -10,8 +10,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"indeed.com/mjpitz/actuary/internal/db"
-	"indeed.com/mjpitz/actuary/v1alpha"
+	"github.com/indeedeng-alpha/actuary/internal/db"
+	"github.com/indeedeng-alpha/actuary/v1alpha"
 )
 
 func NewActuaryServer(db *gorm.DB) v1alpha.ActuaryServiceServer {

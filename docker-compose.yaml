@@ -17,7 +17,7 @@ services:
       - 6060:8080
 
   actuary:
-    image: mjpitz/actuary
+    image: indeedeng/actuary
     restart: always
     hostname: actuary
     depends_on:
