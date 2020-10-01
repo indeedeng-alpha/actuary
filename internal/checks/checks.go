@@ -12,18 +12,28 @@ import (
 	"google.golang.org/grpc"
 	grpchealth "google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+
+	"gorm.io/gorm"
+
+	"indeed.com/mjpitz/actuary/internal/db"
 )
 
-func Checks() []check.Check {
+func Checks(gormDB *gorm.DB) []check.Check {
 	return []check.Check{
 		&check.Periodic{
 			Metadata: check.Metadata{
-				Name:   "no-op",
+				Name:   "database",
 				Weight: 1,
 			},
 			Interval: time.Second * 10,
 			Timeout:  time.Second * 30,
 			RunFunc: func(ctx context.Context) (state.State, error) {
+				result := gormDB.First(&db.LineItem{})
+
+				if result.Error != nil && result.Error.Error() != "" {
+					return state.Outage, result.Error
+				}
+
 				return state.OK, nil
 			},
 		},

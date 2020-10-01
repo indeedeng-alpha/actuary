@@ -1,12 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/rs/cors"
 
@@ -19,15 +23,23 @@ import (
 
 	"google.golang.org/grpc"
 
+	"gorm.io/driver/postgres"
+
+	"gorm.io/gorm"
+
 	"indeed.com/mjpitz/actuary/internal/checks"
+	"indeed.com/mjpitz/actuary/internal/db"
 	"indeed.com/mjpitz/actuary/internal/service"
 	"indeed.com/mjpitz/actuary/v1alpha"
-
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type config struct {
-	BindAddress string
+	BindAddress      string
+	DatabaseUser     string
+	DatabasePassword string
+	DatabaseHost     string
+	DatabasePort     int
+	DatabaseName     string
 }
 
 func main() {
@@ -42,6 +54,36 @@ func main() {
 			Value:       cfg.BindAddress,
 			Destination: &(cfg.BindAddress),
 		},
+		&cli.StringFlag{
+			Name:        "db-user",
+			EnvVars:     []string{"DB_USER"},
+			Value:       cfg.DatabaseUser,
+			Destination: &(cfg.DatabaseUser),
+		},
+		&cli.StringFlag{
+			Name:        "db-password",
+			EnvVars:     []string{"DB_PASSWORD"},
+			Value:       cfg.DatabasePassword,
+			Destination: &(cfg.DatabasePassword),
+		},
+		&cli.StringFlag{
+			Name:        "db-host",
+			EnvVars:     []string{"DB_HOST"},
+			Value:       cfg.DatabaseHost,
+			Destination: &(cfg.DatabaseHost),
+		},
+		&cli.IntFlag{
+			Name:        "db-port",
+			EnvVars:     []string{"DB_PORT"},
+			Value:       cfg.DatabasePort,
+			Destination: &(cfg.DatabasePort),
+		},
+		&cli.StringFlag{
+			Name:        "db-name",
+			EnvVars:     []string{"DB_NAME"},
+			Value:       cfg.DatabaseName,
+			Destination: &(cfg.DatabaseName),
+		},
 	}
 
 	app := cli.App{
@@ -50,19 +92,41 @@ func main() {
 		Action: func(context *cli.Context) error {
 			ctx := context.Context
 
+			opts := []grpc.ServerOption{
+				grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
+				grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
+			}
+
+			grpc_prometheus.EnableHandlingTimeHistogram()
+
 			httpServer := runtime.NewServeMux()
-			grpcServer := grpc.NewServer()
+			grpcServer := grpc.NewServer(opts...)
 			fwdMux := http.NewServeMux()
 
-			// setup the /health and /metrics
-			allChecks := checks.Checks()
-			checks.RegisterHealthCheck(ctx, fwdMux, grpcServer, allChecks)
-			fwdMux.Handle("/metrics", promhttp.Handler())
-
 			// setup actuary
-			actuaryServer := service.NewActuaryServer()
+			dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+				cfg.DatabaseUser, cfg.DatabasePassword, cfg.DatabaseHost, cfg.DatabasePort, cfg.DatabaseName)
+			dialector := postgres.Open(dsn)
+			gormDB, err := gorm.Open(dialector, &gorm.Config{})
+			if err != nil {
+				return err
+			}
+
+			err = gormDB.AutoMigrate(&db.LineItem{})
+			if err != nil {
+				return err
+			}
+
+			actuaryServer := service.NewActuaryServer(gormDB)
 			v1alpha.RegisterActuaryServiceServer(grpcServer, actuaryServer)
 			_ = v1alpha.RegisterActuaryServiceHandlerServer(ctx, httpServer, actuaryServer)
+
+			grpc_prometheus.Register(grpcServer)
+
+			// setup the /health and /metrics
+			allChecks := checks.Checks(gormDB)
+			checks.RegisterHealthCheck(ctx, fwdMux, grpcServer, allChecks)
+			fwdMux.Handle("/metrics", promhttp.Handler())
 
 			// setup rest of mux
 			fwdMux.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
