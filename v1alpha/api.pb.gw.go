@@ -10,6 +10,7 @@ package v1alpha
 
 import (
 	"context"
+	"github.com/indeedeng-alpha/actuary"
 	"io"
 	"net/http"
 
@@ -35,8 +36,8 @@ var _ = utilities.NewDoubleArray
 var _ = descriptor.ForMessage
 var _ = metadata.Join
 
-func request_ActuaryService_Record_0(ctx context.Context, marshaler runtime.Marshaler, client ActuaryServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RecordRequest
+func request_ActuaryService_Record_0(ctx context.Context, marshaler runtime.Marshaler, client actuary.ActuaryServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq actuary.RecordRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -52,8 +53,8 @@ func request_ActuaryService_Record_0(ctx context.Context, marshaler runtime.Mars
 
 }
 
-func local_request_ActuaryService_Record_0(ctx context.Context, marshaler runtime.Marshaler, server ActuaryServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RecordRequest
+func local_request_ActuaryService_Record_0(ctx context.Context, marshaler runtime.Marshaler, server actuary.ActuaryServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq actuary.RecordRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -73,7 +74,7 @@ func local_request_ActuaryService_Record_0(ctx context.Context, marshaler runtim
 // UnaryRPC     :call ActuaryServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterActuaryServiceHandlerFromEndpoint instead.
-func RegisterActuaryServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ActuaryServiceServer) error {
+func RegisterActuaryServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server actuary.ActuaryServiceServer) error {
 
 	mux.Handle("PUT", pattern_ActuaryService_Record_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -129,7 +130,7 @@ func RegisterActuaryServiceHandlerFromEndpoint(ctx context.Context, mux *runtime
 // RegisterActuaryServiceHandler registers the http handlers for service ActuaryService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
 func RegisterActuaryServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterActuaryServiceHandlerClient(ctx, mux, NewActuaryServiceClient(conn))
+	return RegisterActuaryServiceHandlerClient(ctx, mux, actuary.NewActuaryServiceClient(conn))
 }
 
 // RegisterActuaryServiceHandlerClient registers the http handlers for service ActuaryService
@@ -137,7 +138,7 @@ func RegisterActuaryServiceHandler(ctx context.Context, mux *runtime.ServeMux, c
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "ActuaryServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ActuaryServiceClient" to call the correct interceptors.
-func RegisterActuaryServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ActuaryServiceClient) error {
+func RegisterActuaryServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client actuary.ActuaryServiceClient) error {
 
 	mux.Handle("PUT", pattern_ActuaryService_Record_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
