@@ -1,0 +1,10 @@
+## Used to generate RESTful interface
+## See: https://github.com/depscloud/api/blob/main/proto/src/depscloud_api/v1alpha/tracker/tracker.yaml
+type: google.api.Service
+config_version: 3
+
+http:
+  rules:
+    - selector: indeed.actuary.v1alpha.ActuaryService.Record
+      put: /v1alpha/record
+      body: "*"

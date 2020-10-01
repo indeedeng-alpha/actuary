@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package indeed.actuary.v1alpha;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "com.indeed.actuary.v1alpha";
+option go_package = "v1alpha";
+
+message Allocation {
+    google.protobuf.Timestamp datetime = 1;
+    string who = 2;
+    string what = 3;
+    map<string, uint64> detail = 4;
+    map<string, string> labels = 5;
+}
+
+message RecordRequest {
+    map<string, uint64> available = 1;
+
+    repeated Allocation allocations = 2;
+}
+
+message RecordResponse {}
+
+service ActuaryService {
+    rpc Record(RecordRequest) returns (RecordResponse);
+}
