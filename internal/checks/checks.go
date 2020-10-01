@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/indeedeng-alpha/actuary/internal/db"
+
 	"github.com/mjpitz/go-gracefully/check"
 	"github.com/mjpitz/go-gracefully/health"
 	"github.com/mjpitz/go-gracefully/state"
@@ -14,8 +16,6 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"gorm.io/gorm"
-
-	"github.com/indeedeng-alpha/actuary/internal/db"
 )
 
 func Checks(gormDB *gorm.DB) []check.Check {

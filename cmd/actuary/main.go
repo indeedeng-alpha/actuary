@@ -10,6 +10,11 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
+	"github.com/indeedeng-alpha/actuary/internal/checks"
+	"github.com/indeedeng-alpha/actuary/internal/db"
+	"github.com/indeedeng-alpha/actuary/internal/service"
+	"github.com/indeedeng-alpha/actuary/v1alpha"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/rs/cors"
@@ -26,11 +31,6 @@ import (
 	"gorm.io/driver/postgres"
 
 	"gorm.io/gorm"
-
-	"github.com/indeedeng-alpha/actuary/internal/checks"
-	"github.com/indeedeng-alpha/actuary/internal/db"
-	"github.com/indeedeng-alpha/actuary/internal/service"
-	"github.com/indeedeng-alpha/actuary/v1alpha"
 )
 
 type config struct {

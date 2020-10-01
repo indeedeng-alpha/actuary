@@ -6,12 +6,12 @@ import (
 	"math"
 	"time"
 
+	"github.com/indeedeng-alpha/actuary/internal/db"
+	"github.com/indeedeng-alpha/actuary/v1alpha"
+
 	"gorm.io/datatypes"
 
 	"gorm.io/gorm"
-
-	"github.com/indeedeng-alpha/actuary/internal/db"
-	"github.com/indeedeng-alpha/actuary/v1alpha"
 )
 
 func NewActuaryServer(db *gorm.DB) v1alpha.ActuaryServiceServer {
