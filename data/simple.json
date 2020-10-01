@@ -1,0 +1,29 @@
+{
+  "available": {
+    "test": 100
+  },
+  "allocations": [
+    {
+      "datetime": "2020-09-30T00:00:00.000Z",
+      "who": "product-team",
+      "what": "application",
+      "detail": {
+        "test": 30
+      },
+      "labels": {
+        "owner": "product"
+      }
+    },
+    {
+      "datetime": "2020-09-30T00:00:00.000Z",
+      "who": "product-team",
+      "what": "database",
+      "detail": {
+        "test": 70
+      },
+      "labels": {
+        "owner": "dataops"
+      }
+    }
+  ]
+}

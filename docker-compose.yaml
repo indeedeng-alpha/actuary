@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:12.4
+    restart: always
+    hostname: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: actuarydb
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 6060:8080
+
+  actuary:
+    image: mjpitz/actuary
+    restart: always
+    hostname: actuary
+    depends_on:
+      - postgres
+    environment:
+      BIND_ADDRESS: 0.0.0.0:8080
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: actuarydb
+    ports:
+      - 8080:8080
