@@ -1,6 +1,16 @@
 # Actuary
 
+Actuary is a generalized solution for attributing cost across software platforms.
+It implements the server side component as described in Mya's [paper on cost attribution](cost-attribution.pdf).
+
 ![OSS Lifecycle](https://img.shields.io/osslifecycle/indeedeng-alpha/actuary.svg)
+![Status](https://img.shields.io/badge/status-work%20in%20progress-yellow)
+
+## Features
+
+- [ ] A
+- [ ] B
+- [ ] C
 
 ## Getting Started
 
