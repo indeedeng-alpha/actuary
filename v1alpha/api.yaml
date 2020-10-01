@@ -6,5 +6,5 @@ config_version: 3
 http:
   rules:
     - selector: indeed.actuary.v1alpha.ActuaryService.Record
-      put: /v1alpha/record
+      post: /v1alpha/record
       body: "*"

@@ -75,7 +75,7 @@ func local_request_ActuaryService_Record_0(ctx context.Context, marshaler runtim
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterActuaryServiceHandlerFromEndpoint instead.
 func RegisterActuaryServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server ActuaryServiceServer) error {
 
-	mux.Handle("PUT", pattern_ActuaryService_Record_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_ActuaryService_Record_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -139,7 +139,7 @@ func RegisterActuaryServiceHandler(ctx context.Context, mux *runtime.ServeMux, c
 // "ActuaryServiceClient" to call the correct interceptors.
 func RegisterActuaryServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ActuaryServiceClient) error {
 
-	mux.Handle("PUT", pattern_ActuaryService_Record_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_ActuaryService_Record_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)

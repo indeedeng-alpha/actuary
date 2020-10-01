@@ -12,7 +12,7 @@
   ],
   "paths": {
     "/v1alpha/record": {
-      "put": {
+      "post": {
         "operationId": "ActuaryService_Record",
         "responses": {
           "200": {
