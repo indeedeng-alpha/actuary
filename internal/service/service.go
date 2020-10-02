@@ -43,6 +43,8 @@ func fromBasisPoints(val float64) float64 {
 // To do this properly, we need to tally by bucket of time.
 // That shouldn't be too hard to do with a little coding.
 func (a *actuaryServer) Record(ctx context.Context, req *v1alpha.RecordRequest) (*v1alpha.RecordResponse, error) {
+	payee := ctx.Value("actuary.client").(string)
+
 	available := req.Available
 	tally := make(map[string]uint64, len(available))
 
@@ -73,13 +75,12 @@ func (a *actuaryServer) Record(ctx context.Context, req *v1alpha.RecordRequest) 
 		lineItems[i] = &db.LineItem{
 			DateTime: time.Unix(allocation.Datetime.Seconds, int64(allocation.Datetime.Nanos)),
 			Payer:    allocation.Who,
-			//Payee:    ctx.Value("clientID").(string),
-			Payee:  "",
-			Kind:   db.DebitLineItemKind,
-			Usage:  averageUsage,
-			URN:    allocation.What,
-			Detail: datatypes.JSON(detailJSON),
-			Labels: datatypes.JSON(labelsJSON),
+			Payee:    payee,
+			Kind:     db.DebitLineItemKind,
+			Usage:    averageUsage,
+			URN:      allocation.What,
+			Detail:   datatypes.JSON(detailJSON),
+			Labels:   datatypes.JSON(labelsJSON),
 		}
 	}
 

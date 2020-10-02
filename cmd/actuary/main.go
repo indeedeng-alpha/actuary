@@ -1,15 +1,20 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
+	"github.com/indeedeng-alpha/actuary/internal/auth"
 	"github.com/indeedeng-alpha/actuary/internal/checks"
 	"github.com/indeedeng-alpha/actuary/internal/db"
 	"github.com/indeedeng-alpha/actuary/internal/service"
@@ -46,6 +51,9 @@ func main() {
 	cfg := &config{
 		BindAddress: "localhost:8080",
 	}
+
+	// use database when not set, useful for testing
+	authorizationsFile := ""
 
 	flags := []cli.Flag{
 		&cli.StringFlag{
@@ -84,6 +92,12 @@ func main() {
 			Value:       cfg.DatabaseName,
 			Destination: &(cfg.DatabaseName),
 		},
+		&cli.StringFlag{
+			Name:        "authorizations-file",
+			EnvVars:     []string{"AUTHORIZATIONS_FILE"},
+			Value:       authorizationsFile,
+			Destination: &authorizationsFile,
+		},
 	}
 
 	app := cli.App{
@@ -92,9 +106,35 @@ func main() {
 		Action: func(context *cli.Context) error {
 			ctx := context.Context
 
+			var authMethod grpc_auth.AuthFunc
+
+			if authorizationsFile != "" {
+				authorizations := make(map[string]string)
+				body, err := ioutil.ReadFile(authorizationsFile)
+				if err != nil {
+					return err
+				}
+
+				if err := json.Unmarshal(body, &authorizations); err != nil {
+					return err
+				}
+
+				authMethod = auth.NewStatic(authorizations)
+			}
+
+			if authMethod == nil {
+				return fmt.Errorf("database authorizations not yet supported")
+			}
+
 			opts := []grpc.ServerOption{
-				grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
-				grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
+				grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+					grpc_prometheus.UnaryServerInterceptor,
+					grpc_auth.UnaryServerInterceptor(authMethod),
+				)),
+				grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
+					grpc_prometheus.StreamServerInterceptor,
+					grpc_auth.StreamServerInterceptor(authMethod),
+				)),
 			}
 
 			grpc_prometheus.EnableHandlingTimeHistogram()

@@ -19,3 +19,6 @@ test:
 
 run:
 	go run ./cmd/actuary/main.go
+
+docker:
+	docker build . -t indeedeng/actuary
